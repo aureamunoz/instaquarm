@@ -1,4 +1,4 @@
-package com.demo.uploading;
+package org.instaquarm.uploading;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
