@@ -1,10 +1,12 @@
 package org.instaquarm.auth;
 
+import io.quarkus.arc.Unremovable;
 import io.quarkus.security.webauthn.WebAuthnUserProvider;
 import io.smallrye.mutiny.Uni;
 import io.vertx.ext.auth.webauthn.AttestationCertificates;
 import io.vertx.ext.auth.webauthn.Authenticator;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
+@Typed({WebAuthnUserProvider.class, WebAuthnCredentialRepository.class})
+@Unremovable
 public class WebAuthnCredentialRepository implements WebAuthnUserProvider {
 
     // DEMO ONLY - Keep everything in memory
@@ -66,6 +70,7 @@ public class WebAuthnCredentialRepository implements WebAuthnUserProvider {
 
                         persist(credential);
                         users.persist(newUser);
+                        System.out.println("New user registered " + authenticator.getUserName());
                     } else {
                         // existing user
                         user.credential.counter = authenticator.getCounter();

@@ -8,10 +8,17 @@ import io.vertx.ext.auth.webauthn.Authenticator;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import org.jboss.resteasy.reactive.RestForm;
+
+import java.security.Principal;
 
 import static jakarta.ws.rs.core.Response.Status.*;
 
@@ -26,6 +33,14 @@ public class LoginResource {
 
     @Inject
     WebAuthnCredentialRepository credentials;
+
+    @GET
+    @Path("/me")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String me(@Context SecurityContext securityContext) {
+        Principal user = securityContext.getUserPrincipal();
+        return user != null ? user.getName() : "<not logged in>";
+    }
 
     @POST
     public Uni<Response> login(@RestForm String userName,

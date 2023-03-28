@@ -24,8 +24,13 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.instaquarm</groupId>
+            <groupId>org.instaquarkm</groupId>
             <artifactId>webauthn-authentication</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.instaquarkm</groupId>
+            <artifactId>frontend</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

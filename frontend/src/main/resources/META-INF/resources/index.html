@@ -7,11 +7,13 @@
 
     <script async src="/_static/es-module-shims/dist/es-module-shims.js"></script>
     <script src="/_importmap/dynamic-importmap.js"></script>
+    <script src="/q/webauthn/webauthn.js" type="text/javascript" charset="UTF-8"></script>
 
     <script type="module">
-        import 'icons/font-awesome-solid.js';
+        import 'icons/font-awesome.js';
+        import 'components/qui-alert.js';
         import 'components/demo-title.js';
-        import 'components/demo-pictures.js';
+        import 'components/demo-instaquarm.js';
     </script>
 
     <link rel="stylesheet" href="fonts/red-hat-font.min.css">
@@ -36,16 +38,22 @@
             background-image: linear-gradient(131.83deg, #FFFAFA 0%,     #FFF7F7 99.21%);
         }
 
-        /*Contains the menu and pages*/
         .middle {
+            overflow: hidden;
             display: flex;
         }
 
         #page {
             overflow-y: auto;
-            overflow-x: auto;
+            overflow-x: hidden;
             width: 100%;
             padding-bottom: 10px;
+        }
+
+        .secondary {
+            display: flex;
+            gap: 20px;
+            justify-content: space-around;
         }
 
     </style>
@@ -54,12 +62,15 @@
 <body>
 
 <demo-title></demo-title>
-
 <div class="middle">
     <div id="page">
-        <demo-pictures max="10"></demo-pictures>
+        <div class="secondary">
+            <demo-instaquarm></demo-instaquarm>
+        </div>
+
     </div>
 </div>
+
 
 </body>
 
