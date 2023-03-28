@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" type="image/png" href="favicon.ico">
+
+    <script async src="/_static/es-module-shims/dist/es-module-shims.js"></script>
+    <script src="/_importmap/dynamic-importmap.js"></script>
+
+    <script type="module">
+        import 'components/demo-title.js';
+        import 'components/demo-pictures.js';
+    </script>
+
+    <link rel="stylesheet" href="fonts/red-hat-font.min.css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Pacifico" />
+
+    <title>Instaquarm!</title>
+
+    <style>
+        :root {
+            --main-bg-color: #f3eadb;
+            --main-highlight-text-color: #35180A;
+        }
+        body {
+            margin: 0;
+            width: 100%;
+            font-family: 'Red Hat Text', sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: var(--lumo-body-text-color);
+            background-image: linear-gradient(131.83deg, #FFFAFA 0%,     #FFF7F7 99.21%);
+        }
+
+        /*Contains the menu and pages*/
+        .middle {
+            display: flex;
+        }
+
+        #page {
+            overflow-y: auto;
+            overflow-x: auto;
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<demo-title></demo-title>
+
+<div class="middle">
+    <div id="page">
+        <demo-pictures max="10"></demo-pictures>
+    </div>
+</div>
+
+</body>
+
+</html>

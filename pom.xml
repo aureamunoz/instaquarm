@@ -58,5 +58,6 @@
     <modules>
         <module>upload-service</module>
         <module>image-squarer-function</module>
+        <module>wall-service</module>
     </modules>
 </project>

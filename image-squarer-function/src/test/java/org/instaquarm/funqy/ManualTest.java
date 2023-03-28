@@ -17,7 +17,7 @@ import static io.restassured.RestAssured.given;
  * Manual test of the function.
  */
 @Disabled
-public class MyTest {
+public class ManualTest {
 
     @Test
     public void testSquarerFun() throws Exception {
@@ -37,6 +37,40 @@ public class MyTest {
         Assertions.assertEquals(List.of("a", "b"), s.tags);
         Assertions.assertTrue(img.length > s.picture.length);
         Files.write(new File("target/dump.jpg").toPath(), s.picture, StandardOpenOption.CREATE);
+    }
+
+    @Test
+    public void dumpSquarePictures() throws IOException {
+        var list = List.of(new File("/Users/clement/Downloads/sea.jpeg"),
+                new File("/Users/clement/Downloads/desert.jpeg"),
+                new File("/Users/clement/Downloads/mountain.jpeg"),
+                new File("/Users/clement/Downloads/flowers.jpeg"),
+                new File("/Users/clement/Downloads/sunset.jpeg"));
+        for (File file : list) {
+            invokeFunction(file, file.getName());
+        }
+    }
+
+    private void invokeFunction(File file, String name) throws IOException {
+        var img = Files.readAllBytes(file.toPath());
+        SquarerRequest request = new SquarerRequest("clement", img, List.of(name));
+
+        var s = given()
+                .contentType("application/json")
+                .accept("application/json")
+                .body(request)
+                .when()
+                .post("https://vaekn02h31.execute-api.us-east-1.amazonaws.com/stage")
+                .then()
+                .statusCode(200)
+                .extract().as(SquarerResponse.class);
+
+        write(s);
+    }
+
+    private void write(SquarerResponse s) throws IOException {
+        String name = s.tags.get(0);
+        Files.write(new File(name).toPath(), s.picture);
     }
 
 
