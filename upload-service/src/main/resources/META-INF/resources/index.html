@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Hibernate ORM with Panache quickstart - Quarkus</title>
+    <title>Instaquarm - Devoxx</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/wingcss/0.1.8/wing.min.css"/>
     <style>
         input[type=number] {
@@ -22,13 +22,13 @@
     <!-- Load AngularJS -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
     <script type="text/javascript">
-      var app = angular.module("FruitManagement", []);
+      var app = angular.module("PictureManagement", []);
 
       //Controller Part
-      app.controller("FruitManagementController", function ($scope, $http) {
+      app.controller("PictureManagementController", function ($scope, $http) {
 
         //Initialize page with default data which is blank in this example
-        $scope.fruits = [];
+        $scope.pictures = [];
 
         $scope.form = {
           id: -1,
@@ -38,20 +38,20 @@
         //Now load the data from server
         _refreshPageData();
 
-        //HTTP POST/PUT methods for add/edit fruits
+        //HTTP POST/PUT methods for add/edit pictures
         $scope.update = function () {
           var method = "";
           var url = "";
           var data = {};
           if ($scope.form.id == -1) {
-            //Id is absent so add fruits - POST operation
+            //Id is absent so add pictures - POST operation
             method = "POST";
-            url = '/entity/fruits';
+            url = '/entity/pictures';
             data.name = $scope.form.name;
           } else {
             //If Id is present, it's edit operation - PUT operation
             method = "PUT";
-            url = '/entity/fruits/' + $scope.form.id;
+            url = '/entity/pictures/' + $scope.form.id;
             data.name = $scope.form.name;
           }
 
@@ -69,24 +69,24 @@
         $scope.remove = function (fruit) {
           $http({
             method: 'DELETE',
-            url: '/entity/fruits/' + fruit.id
+            url: '/entity/pictures/' + fruit.id
           }).then(_success, _error);
         };
 
-        //In case of edit fruits, populate form with fruit data
+        //In case of edit pictures, populate form with fruit data
         $scope.edit = function (fruit) {
           $scope.form.name = fruit.name;
           $scope.form.id = fruit.id;
         };
 
           /* Private Methods */
-        //HTTP GET- get all fruits collection
+        //HTTP GET- get all pictures collection
         function _refreshPageData() {
           $http({
             method: 'GET',
-            url: '/entity/fruits'
+            url: '/pictures'
           }).then(function successCallback(response) {
-            $scope.fruits = response.data;
+            $scope.pictures = response.data;
           }, function errorCallback(response) {
             console.log(response.statusText);
           });
@@ -109,42 +109,32 @@
       });
     </script>
 </head>
-<body ng-app="FruitManagement" ng-controller="FruitManagementController">
+<body ng-app="PictureManagement" ng-controller="PictureManagementController">
 
 <div class="container">
-    <h1>Hibernate ORM with Panache quickstart - Quarkus</h1>
-    <p>This application demonstrates how a Quarkus application implements a CRUD endpoint to manage fruits using Hibernate ORM with Panache.
-        This management interface invokes the CRUD service endpoint, which interacts with a database using JPA and several other well known libraries.
-    </p>
-    <p>Behind the scenes, we have:
-        <ul>
-            <li>Hibernate ORM with Panache taking care of all CRUD operations</li>
-            <li>RESTEasy powering the REST API</li>
-            <li>ArC, a CDI based dependency injection framework</li>
-            <li>the Narayana Transaction Manager coordinating all transactions</li>
-            <li>Agroal, the high performance Datasource implementation</li>
-            <li>Infinispan used as Hibernate 2nd level caching: enabled on both entities and queries</li>
-            <li>The Undertow webserver</li>
-            <li>Some magic bytecode generation plugged in the compiler...</li>
-        </ul>
-    </p>
+<!--    <h1>Instaquarm - Quarkus</h1>-->
+<!--    <p>This application demonstrates how a Quarkus application implements a CRUD endpoint to manage pictures using Hibernate ORM with Panache and Quarkus Spring Web.-->
+<!--        This management interface invokes the CRUD service endpoint, which interacts with a database using JPA and several other well known libraries.-->
+<!--    </p>-->
 
-    <h3>Add/Edit a fruit</h3>
-    <form ng-submit="update()">
-        <div class="row">
-            <div class="col-6"><input type="text" placeholder="Name" ng-model="form.name" size="60"/></div>
-        </div>
-        <input type="submit" value="Save"/>
-    </form>
+<!--    <h3>Add/Edit a picture</h3>-->
+<!--    <form ng-submit="update()">-->
+<!--        <div class="row">-->
+<!--            <div class="col-6"><input type="text" placeholder="Name" ng-model="form.name" size="60"/></div>-->
+<!--        </div>-->
+<!--        <input type="submit" value="Save"/>-->
+<!--    </form>-->
 
-    <h3>Fruit List</h3>
+    <h1>Instaquarm Pictures List</h1>
     <div class="row">
-        <div class="col-2">Name</div>
+        <div class="col-2">Title</div>
+        <div class="col-5">Created</div>
+        <div class="col-2">Image</div>
     </div>
-    <div class="row" ng-repeat="fruit in fruits">
-        <div class="col-2">{{ fruit.name }}</div>
-        <div class="col-8"><a ng-click="edit( fruit )" class="btn">Edit</a> <a ng-click="remove( fruit )" class="btn">Remove</a>
-        </div>
+    <div class="row" ng-repeat="picture in pictures">
+        <div class="col-2">{{ picture.title }}</div>
+        <div class="col-5">{{ picture.created }}</div>
+        <div class="col-2"><img src="data:image/png;base64, {{ picture.image }}" width="300" height="300"/> </div>
     </div>
 </div>
 

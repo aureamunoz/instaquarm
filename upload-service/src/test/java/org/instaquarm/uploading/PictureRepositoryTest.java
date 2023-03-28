@@ -25,23 +25,6 @@ class PictureRepositoryTest {
                         containsString("screenshot-3")
                 );
 
-//        //Delete the Cherry:
-//        given()
-//                .when().delete("/pictures/1")
-//                .then()
-//                .statusCode(204);
-//
-//        //List all, cherry should be missing now:
-//        given()
-//                .accept("application/json")
-//                .when().get("/pictures")
-//                .then()
-//                .statusCode(200)
-//                .body(
-//                        not(containsString("screenshot-1")),
-//                        containsString("screenshot-2"),
-//                        containsString("screenshot-3")
-//                );
 
         //Create a new Picture
         given()
@@ -55,7 +38,7 @@ class PictureRepositoryTest {
                 .body("id", notNullValue())
                 .extract().body().jsonPath().getString("id");
 
-        //List all, Orange should be present now:
+        //List all
         given()
                 .accept("application/json")
                 .when().get("/pictures")
