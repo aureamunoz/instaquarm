@@ -29,7 +29,7 @@ public class SquarerFunction {
         } else if (image.getWidth() < image.getHeight()) {
             // Portrait
             var cut = (int) Math.round((image.getHeight() - image.getWidth()) / 2.0);
-            return image.getSubimage(cut, 0, squareSize, squareSize);
+            return image.getSubimage(0, cut, squareSize, squareSize);
         } else {
             // Square already
             return image;
