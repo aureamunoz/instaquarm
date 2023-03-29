@@ -59,5 +59,7 @@
         <module>upload-service</module>
         <module>image-squarer-function</module>
         <module>wall-service</module>
+        <module>webauthn-authentication</module>
+        <module>frontend</module>
     </modules>
 </project>
