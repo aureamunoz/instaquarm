@@ -16,6 +16,8 @@ public class Picture  extends PanacheEntity {
 
     public String title;
 
+    public String owner;
+
     @CreationTimestamp
     public Date created;
 

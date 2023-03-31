@@ -92,14 +92,14 @@ export class DemoInstaquarm extends LitElement {
 
     _snapshot() {
         console.log("uploading")
-        const picture = this.shadowRoot.querySelector("#snapshot").files[0];
-        picture.arrayBuffer().then(r => {
+        const image = this.shadowRoot.querySelector("#snapshot").files[0];
+        image.arrayBuffer().then(r => {
             const bytes = this._arrayBufferToBase64(r);
             console.log(bytes);
             const title = this.shadowRoot.querySelector("#title").value;
             const req = {
                 'user': this._username,
-                'picture': bytes,
+                'image': bytes,
                 'title': title
             };
             console.log("Request", req);
