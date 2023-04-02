@@ -87,4 +87,19 @@ public class WebAuthnCredential {
         user.credential = this;
     }
 
+    @Override
+    public String toString() {
+        return "WebAuthnCredential{" +
+                "userName='" + userName + '\'' +
+                ", type='" + type + '\'' +
+                ", credID='" + credID + '\'' +
+                ", publicKey='" + publicKey + '\'' +
+                ", counter=" + counter +
+                ", aaguid='" + aaguid + '\'' +
+                ", alg=" + alg +
+                ", x5c=" + x5c +
+                ", fmt='" + fmt + '\'' +
+                ", user=" + user +
+                '}';
+    }
 }
