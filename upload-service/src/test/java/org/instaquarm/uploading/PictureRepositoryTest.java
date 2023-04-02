@@ -24,11 +24,12 @@ class PictureRepositoryTest {
     @Test
     void testPicturesEndpoint() throws IOException {
         //Create a new Picture
-//        byte[] image = getClass().getResourceAsStream("/ejemplo.png").readAllBytes();
+        byte[] image = getClass().getResourceAsStream("/sunset.jpeg").readAllBytes();
+        var pictureRequest = new UploadController.PictureRequest("selfie","test", image);
 
         given().auth().preemptive().basic("admin", "admin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body("{\"title\": \"selfie\", \"owner\": \"test\"}")
+                .body(pictureRequest)
                 .when().post("/upload")
                 .then()
                 .statusCode(201).body(containsString("selfie"))
@@ -38,7 +39,7 @@ class PictureRepositoryTest {
         //List all
         given()
                 .accept("application/json")
-                .when().get("/pictures")
+                .when().get("/upload")
                 .then()
                 .statusCode(200)
                 .body(

@@ -26,4 +26,12 @@ public class Picture  extends PanacheEntity {
     @JdbcTypeCode(Types.BINARY)
     public byte[] image;
 
+    public Picture(String title, String owner, byte[] image) {
+        this.title = title;
+        this.owner = owner;
+        this.image = image;
+    }
+
+    public Picture() {
+    }
 }

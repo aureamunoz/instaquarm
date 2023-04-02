@@ -25,11 +25,7 @@ public class UploadController {
     @PostMapping
     @Transactional
     public Response add(PictureRequest request) {
-        System.out.println(request.title +" picture has been uploaded by: "+request.user);
-        Picture picture = new Picture();
-        picture.title = request.title;
-        picture.owner = request.user;
-        picture.image = request.image;
+        Picture picture = new Picture(request.title,request.user,request.image);
 
         Picture.persist(picture);
         return Response.ok(picture).status(201).build();
