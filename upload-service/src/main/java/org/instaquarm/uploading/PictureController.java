@@ -24,9 +24,9 @@ import org.jboss.logging.Logger;
 @RestController
 @RolesAllowed("user")
 @RequestMapping("/pictures")
-public class UploadController {
+public class PictureController {
 
-    private static final Logger LOGGER = Logger.getLogger(UploadController.class);
+    private static final Logger LOGGER = Logger.getLogger(PictureController.class);
 
     @RestClient
     SquarerRestClient squarerRestClient;

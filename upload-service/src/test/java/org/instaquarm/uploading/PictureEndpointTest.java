@@ -1,8 +1,6 @@
 package org.instaquarm.uploading;
 
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -12,11 +10,11 @@ import java.io.IOException;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.instaquarm.uploading.UploadController.*;
+import static org.instaquarm.uploading.PictureController.*;
 
 @Disabled
 @QuarkusTest
-class PictureRepositoryTest {
+class PictureEndpointTest {
 
     @Test
     void testPicturesEndpoint() throws IOException {
