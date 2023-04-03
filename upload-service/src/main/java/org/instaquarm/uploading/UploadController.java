@@ -23,7 +23,7 @@ import org.jboss.logging.Logger;
 
 @RestController
 @RolesAllowed("user")
-@RequestMapping("/upload")
+@RequestMapping("/pictures")
 public class UploadController {
 
     private static final Logger LOGGER = Logger.getLogger(UploadController.class);
@@ -47,6 +47,30 @@ public class UploadController {
         return Picture.findAll().list();
     }
 
+    @GetMapping("/count")
+    public Response count(){
+        final Long invocationNumber = counter.getAndIncrement();
+        try {
+            var count = getPicturesCount();
+            LOGGER.infof("UploadController#count() invocation #%d returning successfully", invocationNumber);
+            return Response.ok(count).build();
+        } catch (RuntimeException e) {
+            String message = e.getClass().getSimpleName() + ": " + e.getMessage();
+            LOGGER.errorf("UploadController#count() invocation #%d failed: %s", invocationNumber, message);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(message)
+                    .type(MediaType.TEXT_PLAIN_TYPE)
+                    .build();
+        }
+    }
+
+    @CircuitBreaker(requestVolumeThreshold = 2)
+    public long getPicturesCount(){
+        final Long invocationNumber = counter.getAndIncrement();
+        maybeFail(String.format("UploadController#getPicturesCount() invocation #%d failed", invocationNumber));
+        return Picture.count();
+    }
+
     private void maybeFail(String failureLogMessage) {
         if (new Random().nextBoolean()) {
             LOGGER.error(failureLogMessage);
@@ -54,20 +78,16 @@ public class UploadController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/new")
     @Timeout(250)
     @Fallback(fallbackMethod = "fallbackAdd")
     @Transactional
     public Response add(PictureRequest request) throws InterruptedException {
         Picture picture = new Picture(request.title,request.user,request.image);
         Picture.persist(picture);
-        callSquarerFunction(picture);
-        return Response.ok(picture).status(201).build();
-    }
-
-    private void callSquarerFunction(Picture picture) throws InterruptedException {
         Thread.sleep(new Random().nextInt(500));
         squarerRestClient.makeItSquare(picture);
+        return Response.ok(picture).status(201).build();
     }
 
     public Response fallbackAdd(PictureRequest request) {

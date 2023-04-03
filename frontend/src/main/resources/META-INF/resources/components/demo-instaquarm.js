@@ -115,7 +115,7 @@ export class DemoInstaquarm extends LitElement {
                 'title': title
             };
             console.log("Request", req);
-            fetch('/upload', {
+            fetch('/pictures/new', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
