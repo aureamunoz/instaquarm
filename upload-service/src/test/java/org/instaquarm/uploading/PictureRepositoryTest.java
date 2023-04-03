@@ -8,14 +8,11 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.core.IsNot.not;
+import static org.instaquarm.uploading.UploadController.*;
 
 @Disabled
 @QuarkusTest
@@ -24,15 +21,15 @@ class PictureRepositoryTest {
     @Test
     void testPicturesEndpoint() throws IOException {
         //Create a new Picture
-        byte[] image = getClass().getResourceAsStream("/sunset.jpeg").readAllBytes();
-        var pictureRequest = new UploadController.PictureRequest("selfie","test", image);
+        var image = getClass().getResourceAsStream("/sunset.jpeg").readAllBytes();
+        var pictureRequest = new PictureRequest("sunset","test", image);
 
-        given().auth().preemptive().basic("admin", "admin")
+        given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(pictureRequest)
                 .when().post("/upload")
                 .then()
-                .statusCode(201).body(containsString("selfie"))
+                .statusCode(201).body(containsString("sunset"))
                 .body("id", notNullValue())
                 .extract().body().jsonPath().getString("id");
 
@@ -44,8 +41,9 @@ class PictureRepositoryTest {
                 .statusCode(200)
                 .body(
                         containsString("\"id\":1"),
-                        containsString("\"title\":\"selfie\""),
+                        containsString("\"title\":\"sunset\""),
                         containsString("\"created\":")
                 );
     }
+
 }
