@@ -1,0 +1,22 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: upload-service
+  labels:
+    app.kubernetes.io/managed-by: quarkus
+    app.kubernetes.io/name: upload-service
+    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    app.openshift.io/runtime: quarkus
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  to:
+    kind: Service
+    name: upload-service
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
