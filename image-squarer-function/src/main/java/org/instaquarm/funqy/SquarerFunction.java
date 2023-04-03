@@ -13,8 +13,8 @@ public class SquarerFunction {
 
     @Funq
     public SquarerResponse squareFunction(SquarerRequest request) throws IOException {
-        Image image = makeItSmall(makeItSquare(request.picture));
-        return new SquarerResponse(request.user, getBytes(image), request.tags);
+        Image image = makeItSmall(makeItSquare(request.image));
+        return new SquarerResponse(request.owner, getBytes(image), request.title);
     }
 
 

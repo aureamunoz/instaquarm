@@ -22,7 +22,7 @@ public class ManualTest {
     @Test
     public void testSquarerFun() throws Exception {
         var img = Files.readAllBytes(new File("/Users/clement/Downloads/IMG_2431.JPG").toPath());
-        SquarerRequest request = new SquarerRequest("clement", img, List.of("a", "b"));
+        SquarerRequest request = new SquarerRequest("clement", img, "IMG_2431.JPG");
 
         var s = given()
                 .contentType("application/json")
@@ -33,10 +33,10 @@ public class ManualTest {
                 .then()
                 .statusCode(200)
                 .extract().as(SquarerResponse.class);
-        Assertions.assertEquals("clement", s.user);
-        Assertions.assertEquals(List.of("a", "b"), s.tags);
-        Assertions.assertTrue(img.length > s.picture.length);
-        Files.write(new File("target/dump.jpg").toPath(), s.picture, StandardOpenOption.CREATE);
+        Assertions.assertEquals("clement", s.owner);
+        Assertions.assertEquals("IMG_2431.JPG", s.title);
+        Assertions.assertTrue(img.length > s.image.length);
+        Files.write(new File("target/dump.jpg").toPath(), s.image, StandardOpenOption.CREATE);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ManualTest {
 
     private void invokeFunction(File file, String name) throws IOException {
         var img = Files.readAllBytes(file.toPath());
-        SquarerRequest request = new SquarerRequest("clement", img, List.of(name));
+        SquarerRequest request = new SquarerRequest("clement", img, name);
 
         var s = given()
                 .contentType("application/json")
@@ -69,8 +69,8 @@ public class ManualTest {
     }
 
     private void write(SquarerResponse s) throws IOException {
-        String name = s.tags.get(0);
-        Files.write(new File(name).toPath(), s.picture);
+        String name = s.title;
+        Files.write(new File(name).toPath(), s.image);
     }
 
 
