@@ -1,6 +1,9 @@
 package org.instaquarm.funqy;
 
 import io.quarkus.funqy.Funq;
+import io.smallrye.reactive.messaging.MutinyEmitter;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.reactive.messaging.Channel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,7 +17,21 @@ public class SquarerFunction {
     @Funq
     public SquarerResponse squareFunction(SquarerRequest request) throws IOException {
         Image image = makeItSmall(makeItSquare(request.image));
-        return new SquarerResponse(request.owner, getBytes(image), request.title);
+        var response = new SquarerResponse(request.owner, getBytes(image), request.title);
+
+        sendToKafka(response);
+        return response;
+    }
+
+    @Channel("images")
+    MutinyEmitter<SquarerResponse> emitter;
+
+    private void sendToKafka(SquarerResponse response) {
+        try {
+            this.emitter.sendAndAwait(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

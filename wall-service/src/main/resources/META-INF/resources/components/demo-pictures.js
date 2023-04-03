@@ -70,6 +70,7 @@ export class DemoPictures extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         const prices = new EventSource("/wall/stream");
+        this._pictures = [];
         prices.onmessage = (event) => {
             const newLength = this._pictures.unshift(JSON.parse(event.data));
             if (newLength > this.max) {
@@ -78,19 +79,10 @@ export class DemoPictures extends LitElement {
             console.log(this._pictures);
             this.requestUpdate();
         }
-
-        fetch("/wall/last")
-            .then(response => {
-                return response.json();
-            })
-            .then(json => {
-                this._pictures = json;
-                console.log(this._pictures);
-            });
     }
 
     render() {
-        return html`${until(this._render(), html`<span>Loading drinks...</span>`)}`;
+        return html`${until(this._render(), html`<span>Loading images...</span>`)}`;
     }
 
     _render() {
@@ -104,7 +96,7 @@ export class DemoPictures extends LitElement {
 
     _renderPicture(pic) {
         return html`<div class="image">
-            <img src="data:image/jpg;base64,${pic.picture}"/>
+            <img src="data:image/jpg;base64,${pic.image}"/>
         </div>`
     }
 

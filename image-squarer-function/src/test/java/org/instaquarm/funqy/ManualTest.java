@@ -21,20 +21,20 @@ public class ManualTest {
 
     @Test
     public void testSquarerFun() throws Exception {
-        var img = Files.readAllBytes(new File("/Users/clement/Downloads/IMG_2431.JPG").toPath());
-        SquarerRequest request = new SquarerRequest("clement", img, "IMG_2431.JPG");
+        var img = Files.readAllBytes(new File("/Users/clement/Downloads/chaine.jpg").toPath());
+        SquarerRequest request = new SquarerRequest("clement", img, "chaine.jpg");
 
         var s = given()
                 .contentType("application/json")
                 .accept("application/json")
                 .body(request)
                 .when()
-                .post("https://vaekn02h31.execute-api.us-east-1.amazonaws.com/stage")
+                .post("https://vaekn02h31.execute-api.us-east-1.amazonaws.com/stage/squarer")
                 .then()
                 .statusCode(200)
                 .extract().as(SquarerResponse.class);
         Assertions.assertEquals("clement", s.owner);
-        Assertions.assertEquals("IMG_2431.JPG", s.title);
+        Assertions.assertEquals("chaine.jpg", s.title);
         Assertions.assertTrue(img.length > s.image.length);
         Files.write(new File("target/dump.jpg").toPath(), s.image, StandardOpenOption.CREATE);
     }
@@ -60,7 +60,7 @@ public class ManualTest {
                 .accept("application/json")
                 .body(request)
                 .when()
-                .post("https://vaekn02h31.execute-api.us-east-1.amazonaws.com/stage")
+                .post("https://vaekn02h31.execute-api.us-east-1.amazonaws.com/stage/squarer")
                 .then()
                 .statusCode(200)
                 .extract().as(SquarerResponse.class);
