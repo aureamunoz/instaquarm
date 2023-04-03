@@ -67,6 +67,11 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-openshift</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-kubernetes-config</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

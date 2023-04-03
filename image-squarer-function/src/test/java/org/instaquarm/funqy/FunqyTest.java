@@ -1,6 +1,5 @@
 package org.instaquarm.funqy;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,8 @@ public class FunqyTest {
     @Test
     public void testSquarer() throws Exception {
         var img = Files.readAllBytes(new File("src/test/resources/img-placeholder-rectangle.jpg").toPath());
-        SquarerRequest request = new SquarerRequest("clement", img, List.of("a", "b"));
+        String title = "a rectangle";
+        SquarerRequest request = new SquarerRequest("clement", img, title);
         var s = given()
                 .contentType("application/json")
                 .accept("application/json")
@@ -29,9 +29,9 @@ public class FunqyTest {
                 .then()
                 .statusCode(200)
                 .extract().as(SquarerResponse.class);
-        Assertions.assertEquals("clement", s.user);
-        Assertions.assertEquals(List.of("a", "b"), s.tags);
-        Assertions.assertTrue(img.length > s.picture.length);
+        Assertions.assertEquals("clement", s.owner);
+        Assertions.assertEquals(title, s.title);
+        Assertions.assertTrue(img.length > s.image.length);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class FunqyTest {
 
     private void invokeFunction(File file, String name) throws IOException {
         var img = Files.readAllBytes(file.toPath());
-        SquarerRequest request = new SquarerRequest("clement", img, List.of(name));
+        SquarerRequest request = new SquarerRequest("clement", img, name);
 
         given()
                 .contentType("application/json")

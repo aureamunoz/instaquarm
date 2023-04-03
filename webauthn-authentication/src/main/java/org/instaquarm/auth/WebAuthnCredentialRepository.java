@@ -79,6 +79,7 @@ public class WebAuthnCredentialRepository implements WebAuthnUserProvider {
     }
 
     public void persist(WebAuthnCredential credential) {
+        System.out.println(credential);
         credentials.add(credential);
     }
 

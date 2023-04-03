@@ -19,12 +19,6 @@ public class WallResource {
     }
 
     @GET
-    @Path("/last")
-    public List<Picture> last() {
-        return Pictures.PICTURES;
-    }
-
-    @GET
     @RestStreamElementType(MediaType.APPLICATION_JSON)
     @Path("/stream")
     public Multi<Picture> stream() {

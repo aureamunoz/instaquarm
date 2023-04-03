@@ -1,17 +1,20 @@
 package org.instaquarm.wall;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import org.mvnpm.importmap.Aggregator;
+import org.mvnpm.importmap.model.Imports;
 
 /**
  * Dynamically create the import map
  */
 @ApplicationScoped
 @Path("/_importmap")
+@RegisterForReflection(classNames = "org.mvnpm.importmap.model.Imports")
 public class ImportmapResource {
     private String importmap;
     

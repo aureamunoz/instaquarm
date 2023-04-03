@@ -24,6 +24,13 @@ export class DemoInstaquarm extends LitElement {
         color: var(--main-highlight-text-color);
       }
 
+      @media all and (min-width:0px) and (max-width: 1024px) {
+        .content {
+          margin-left: 10px;
+          margin-right: 10px;
+        }
+      }
+
     `
 
     static properties = {
@@ -58,6 +65,7 @@ export class DemoInstaquarm extends LitElement {
                 return this._renderSnapshotView();
             } else {
                 return html`
+                    <div class="content">
                     ${this._notification}
                     <h3>Login</h3>
                     <vaadin-text-field class="input-column" theme="small"
@@ -77,6 +85,7 @@ export class DemoInstaquarm extends LitElement {
                         <vaadin-icon slot="suffix" icon="font-awesome-solid:right-to-bracket" class="login-button"
                                      id="login-button" @click="${this._login}"></vaadin-icon>
                     </vaadin-button>
+                    </div>
                 `
             }
         }
@@ -84,9 +93,12 @@ export class DemoInstaquarm extends LitElement {
 
     _renderSnapshotView() {
         return html`
-            <input id="snapshot" type="file" accept="image/*;capture=camera">
-            <vaadin-text-field id="title" placeholder="title"></vaadin-text-field>
-            <vaadin-button  @click="${this._snapshot}" id="click-photo">Upload!</vaadin-button>
+            <div class="content">
+                ${this._notification}
+                <input id="snapshot" type="file" accept="image/*;capture=camera">
+                <vaadin-text-field id="title" placeholder="title"></vaadin-text-field>
+                <vaadin-button  @click="${this._snapshot}" id="click-photo">Upload!</vaadin-button>
+            </div>
         `
     }
 
@@ -111,7 +123,13 @@ export class DemoInstaquarm extends LitElement {
                 body: JSON.stringify(req)
             })
                 .then(response => response.json())
-                .then(response => console.log(JSON.stringify(response)))
+                .then(response => {
+                    console.log(JSON.stringify(response));
+                    this._notification = html`
+                    <qui-alert level="success" dismissible showIcon>
+                        <p>Picture uploaded!</p>
+                    </qui-alert>`
+                })
         })
     }
 
@@ -131,7 +149,6 @@ export class DemoInstaquarm extends LitElement {
         console.log("login", userName);
         this.webAuthn.login({name: userName})
             .then(body => {
-                this.shadowRoot.getElementById('#input-login').value = "";
                 this._notification = html`
                     <qui-alert level="success" dismissible showIcon>
                         <p>Login successful for ${userName}</p>
