@@ -15,6 +15,7 @@ jobs:
         run: ./mvnw -B clean install -Pnative
       - name: Save wall-service binary
         uses: actions/upload-artifact@v3
+        if: github.ref == 'refs/heads/main'
         with:
           name: wall-service
           path: wall-service/target/wall-service-*-runner
