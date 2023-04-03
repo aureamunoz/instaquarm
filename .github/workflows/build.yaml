@@ -18,3 +18,4 @@ jobs:
         with:
           name: wall-service
           path: wall-service/target/wall-service-*-runner
+          retention-days: 3
