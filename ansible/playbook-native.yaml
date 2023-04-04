@@ -1,0 +1,47 @@
+- name: Deploy Wall Service to AWS
+  become: yes
+  become_user: root
+  become_method: sudo
+  hosts: demo
+  tasks:
+    - name: Ping them all!
+      ansible.builtin.ping:
+
+    - name: Create user 'quarkus'
+      ansible.builtin.user:
+        name: quarkus
+        uid: 1001
+
+    - name: Copy application
+      ansible.builtin.copy:
+        src: application
+        dest: /home/quarkus/application
+        owner: quarkus
+        mode: u=rwx,g=r,o=r
+
+    - name: Copy environment
+      ansible.builtin.copy:
+        src: environment
+        dest: /home/quarkus/.env
+        owner: quarkus
+        mode: u=r
+
+    - name: Create application service
+      ansible.builtin.copy:
+        src: quarkus.service
+        dest: /lib/systemd/system/quarkus.service
+        mode: 644
+      notify:
+        - Restart application
+
+    - name: Start service
+      ansible.builtin.systemd:
+        name: quarkus.service
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Restart application
+      ansible.builtin.service:
+        name: quarkus.service
+        state: restarted

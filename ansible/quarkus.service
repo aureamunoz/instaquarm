@@ -1,0 +1,16 @@
+[Unit]
+Description=Wall Service
+After=network.target
+
+[Service]
+WorkingDirectory=/home/quarkus
+ExecStart=/home/quarkus/application
+User=quarkus
+Type=simple
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/var/log/quarkus.log
+StandardError=append:/var/log/quarkus.log
+
+[Install]
+WantedBy=multi-user.target
