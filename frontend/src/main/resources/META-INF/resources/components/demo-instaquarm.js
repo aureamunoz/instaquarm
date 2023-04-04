@@ -122,20 +122,25 @@ export class DemoInstaquarm extends LitElement {
                 },
                 body: JSON.stringify(req)
             })
-                .then(response => response.json())
                 .then(response => {
-                    if(response.status == 201) {
-                        console.log(JSON.stringify(response));
+                    console.log(JSON.stringify(response),"Response status",response.status);
+                    if(response.ok) {
                         this._notification = html`        
                             <qui-alert level="success" dismissible showIcon>
                                 <p>Picture uploaded!</p>
                             </qui-alert>`
-                        } else {
+                    } if (response.status===500){
+                            this._notification = html`        
+                                <qui-alert level="warning" dismissible showIcon>
+                                    <p>Circuit Breaker is open!</p>
+                                </qui-alert>`
+                    }else {
+                            console.log(JSON.stringify(response),"mensaje",response.body);
                             this._notification = html`        
                             <qui-alert level="error" dismissible showIcon>
                                 <p>Picture uploading failed!</p>
                             </qui-alert>`
-                        }
+                    }
                 })
         })
     }

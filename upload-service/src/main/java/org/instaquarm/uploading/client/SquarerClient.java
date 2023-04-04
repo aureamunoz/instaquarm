@@ -1,6 +1,7 @@
 package org.instaquarm.uploading.client;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -19,11 +20,16 @@ public class SquarerClient {
     SquarerRestClient squarerRestClient;
 
     @Retry(maxRetries = 4)
-    @Timeout(5000)
-    public Picture makeItSquare(Picture picture) {
-        maybeFail("UploadController#findAll() failed");
-        LOGGER.infof("UploadController#findAll() returning successfully");
-        return squarerRestClient.makeItSquare(picture);
+    @Timeout(10000)
+    @CircuitBreaker(requestVolumeThreshold = 4)
+    public Picture makeItSquare(Picture picture) throws InterruptedException {
+        //for Fault tolerance demo purpose
+        maybeFail("UploadController#makeItSquare() failed");
+        LOGGER.infof("UploadController#makeItSquare() returning successfully");
+        Thread.sleep(new Random().nextInt(3000));
+
+        var squared= squarerRestClient.makeItSquare(picture);
+        return squared;
     }
 
     private void maybeFail(String failureLogMessage) {
@@ -32,4 +38,5 @@ public class SquarerClient {
             throw new RuntimeException("Resource failure.");
         }
     }
+
 }

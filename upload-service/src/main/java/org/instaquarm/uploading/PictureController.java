@@ -4,6 +4,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.faulttolerance.exceptions.CircuitBreakerOpenException;
 import org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException;
 import org.instaquarm.uploading.client.SquarerClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,6 @@ public class PictureController {
 
     public record PictureRequest(String title, String user, byte[] image) {};
 
-    private AtomicLong counter = new AtomicLong(0);
-
     @GetMapping
     public List<Picture> findAll(){
         return Picture.findAll().list();
@@ -46,8 +45,10 @@ public class PictureController {
         } catch (TimeoutException e) { // the squarer function is nice-to-have, we can persist the original image
             Picture.persist(picture);
             return Response.ok(picture).status(201).build();
+        }catch(CircuitBreakerOpenException ex){
+            return Response.serverError().entity(ex).build();
         } catch (RuntimeException e){
-            throw e;
+            return Response.serverError().status(503).build();
         }
 
     }
