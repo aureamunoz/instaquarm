@@ -4,6 +4,7 @@ import io.quarkus.funqy.Funq;
 import io.smallrye.reactive.messaging.MutinyEmitter;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -24,14 +25,18 @@ public class SquarerFunction {
     }
 
     @Channel("images")
-    MutinyEmitter<SquarerResponse> emitter;
+    Emitter<SquarerResponse> emitter;
 
     private void sendToKafka(SquarerResponse response) {
-        try {
-            this.emitter.sendAndAwait(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        long start = System.currentTimeMillis();
+        this.emitter.send(response)
+                .thenAccept(x -> {
+                    System.out.println("Message acked in " + (System.currentTimeMillis() - start) + "ms");
+                })
+                .exceptionally(e -> {
+                    System.out.println("Unable to send the message to kafka: " + e);
+                    return null;
+                }).toCompletableFuture().join();
     }
 
 
