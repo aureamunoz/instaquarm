@@ -63,3 +63,7 @@ nb-configuration.xml
 
 # Local environment
 .env
+
+ansible/environment
+ansible/application
+ansible/hosts
