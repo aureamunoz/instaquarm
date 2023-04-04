@@ -12,7 +12,6 @@ import org.mvnpm.importmap.model.Imports;
 /**
  * Dynamically create the import map
  */
-@ApplicationScoped
 @Path("/_importmap")
 @RegisterForReflection(classNames = "org.mvnpm.importmap.model.Imports")
 public class ImportmapResource {
