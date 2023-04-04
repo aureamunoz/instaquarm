@@ -19,12 +19,11 @@ public class SquarerClient {
     SquarerRestClient squarerRestClient;
 
     @Retry(maxRetries = 4)
-//    @Timeout(5000)
+    @Timeout(5000)
     public Picture makeItSquare(Picture picture) {
         maybeFail("UploadController#findAll() failed");
         LOGGER.infof("UploadController#findAll() returning successfully");
-        return picture;
-//        return squarerRestClient.makeItSquare(picture);
+        return squarerRestClient.makeItSquare(picture);
     }
 
     private void maybeFail(String failureLogMessage) {
