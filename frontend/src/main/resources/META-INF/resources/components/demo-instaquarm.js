@@ -124,7 +124,7 @@ export class DemoInstaquarm extends LitElement {
             })
                 .then(response => {
                     console.log(JSON.stringify(response),"Response status",response.status);
-                    if(response.ok) {
+                    if(response.status===201) {
                         this._notification = html`        
                             <qui-alert level="success" dismissible showIcon>
                                 <p>Picture uploaded!</p>
@@ -134,7 +134,7 @@ export class DemoInstaquarm extends LitElement {
                                 <qui-alert level="warning" dismissible showIcon>
                                     <p>Circuit Breaker is open!</p>
                                 </qui-alert>`
-                    }else {
+                    } if(response.status===503) {
                             this._notification = html`        
                             <qui-alert level="error" dismissible showIcon>
                                 <p>Picture uploading failed!</p>
