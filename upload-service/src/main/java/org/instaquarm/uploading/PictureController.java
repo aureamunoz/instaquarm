@@ -38,16 +38,15 @@ public class PictureController {
     @Transactional
     public Response add(PictureRequest request) throws InterruptedException {
         Picture picture = new Picture(request.title,request.user,request.image);
+        Picture.persist(picture);
         try {
             squarerClient.makeItSquare(picture);
-            Picture.persist(picture);
             return Response.ok(picture).status(201).build();
-        } catch (TimeoutException e) { // the squarer function is nice-to-have, we can persist the original image
-            Picture.persist(picture);
+        } catch (TimeoutException e) {
             return Response.ok(picture).status(201).build();
         }catch(CircuitBreakerOpenException ex){
             return Response.serverError().entity(ex).build();
-        } catch (RuntimeException e){
+        } catch (RuntimeException e){ //when retry>4
             return Response.serverError().status(503).build();
         }
 

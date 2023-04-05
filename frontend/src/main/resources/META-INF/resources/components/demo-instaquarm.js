@@ -135,7 +135,6 @@ export class DemoInstaquarm extends LitElement {
                                     <p>Circuit Breaker is open!</p>
                                 </qui-alert>`
                     }else {
-                            console.log(JSON.stringify(response),"mensaje",response.body);
                             this._notification = html`        
                             <qui-alert level="error" dismissible showIcon>
                                 <p>Picture uploading failed!</p>
