@@ -115,20 +115,31 @@ export class DemoInstaquarm extends LitElement {
                 'title': title
             };
             console.log("Request", req);
-            fetch('/upload', {
+            fetch('/pictures/new', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(req)
             })
-                .then(response => response.json())
                 .then(response => {
-                    console.log(JSON.stringify(response));
-                    this._notification = html`
-                    <qui-alert level="success" dismissible showIcon>
-                        <p>Picture uploaded!</p>
-                    </qui-alert>`
+                    console.log(JSON.stringify(response),"Response status",response.status);
+                    if(response.status===201) {
+                        this._notification = html`        
+                            <qui-alert level="success" dismissible showIcon>
+                                <p>Picture uploaded!</p>
+                            </qui-alert>`
+                    } if (response.status===500){
+                            this._notification = html`        
+                                <qui-alert level="warning" dismissible showIcon>
+                                    <p>Circuit Breaker is open!</p>
+                                </qui-alert>`
+                    } if(response.status===503) {
+                            this._notification = html`        
+                            <qui-alert level="error" dismissible showIcon>
+                                <p>Picture uploading failed!</p>
+                            </qui-alert>`
+                    }
                 })
         })
     }
