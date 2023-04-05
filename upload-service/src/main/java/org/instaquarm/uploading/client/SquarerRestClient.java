@@ -8,7 +8,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.instaquarm.uploading.Picture;
 
 
-@RegisterRestClient(configKey = "squarer-function")
+@RegisterRestClient(configKey = "squarer")
 public interface SquarerRestClient {
 
     @POST
