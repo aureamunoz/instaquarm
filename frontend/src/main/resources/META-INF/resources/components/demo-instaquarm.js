@@ -24,7 +24,7 @@ export class DemoInstaquarm extends LitElement {
         color: var(--main-highlight-text-color);
       }
 
-      @media all and (min-width:0px) and (max-width: 1024px) {
+      @media all and (min-width: 0px) and (max-width: 1024px) {
         .content {
           margin-left: 10px;
           margin-right: 10px;
@@ -66,25 +66,25 @@ export class DemoInstaquarm extends LitElement {
             } else {
                 return html`
                     <div class="content">
-                    ${this._notification}
-                    <h3>Login</h3>
-                    <vaadin-text-field class="input-column" theme="small"
-                                       placeholder="login" id="input-login" @keydown="${this._keydown}">
-                        <vaadin-icon slot="suffix" icon="font-awesome-solid:right-to-bracket" class="login-button"
-                                     id="login-button" @click="${this._login}"></vaadin-icon>
-                    </vaadin-text-field>
-                    <h3>Register</h3>
-                    <vaadin-text-field class="input-column" theme="small"
-                                       placeholder="username" id="username"></vaadin-text-field>
-                    <vaadin-text-field class="input-column" theme="small"
-                                       placeholder="first name" id="first"></vaadin-text-field>
-                    <vaadin-text-field class="input-column" theme="small"
-                                       placeholder="last name" id="last"></vaadin-text-field>
-                    <vaadin-button @click="${this._register}" id="register">
-                        Register
-                        <vaadin-icon slot="suffix" icon="font-awesome-solid:right-to-bracket" class="login-button"
-                                     id="login-button" @click="${this._login}"></vaadin-icon>
-                    </vaadin-button>
+                        ${this._notification}
+                        <h3>Login</h3>
+                        <vaadin-text-field class="input-column" theme="small"
+                                           placeholder="login" id="input-login" @keydown="${this._keydown}">
+                            <vaadin-icon slot="suffix" icon="font-awesome-solid:right-to-bracket" class="login-button"
+                                         id="login-button" @click="${this._login}"></vaadin-icon>
+                        </vaadin-text-field>
+                        <h3>Register</h3>
+                        <vaadin-text-field class="input-column" theme="small"
+                                           placeholder="username" id="username"></vaadin-text-field>
+                        <vaadin-text-field class="input-column" theme="small"
+                                           placeholder="first name" id="first"></vaadin-text-field>
+                        <vaadin-text-field class="input-column" theme="small"
+                                           placeholder="last name" id="last"></vaadin-text-field>
+                        <vaadin-button @click="${this._register}" id="register">
+                            Register
+                            <vaadin-icon slot="suffix" icon="font-awesome-solid:right-to-bracket" class="login-button"
+                                         id="login-button" @click="${this._login}"></vaadin-icon>
+                        </vaadin-button>
                     </div>
                 `
             }
@@ -97,13 +97,16 @@ export class DemoInstaquarm extends LitElement {
                 ${this._notification}
                 <input id="snapshot" type="file" accept="image/*;capture=camera">
                 <vaadin-text-field id="title" placeholder="title"></vaadin-text-field>
-                <vaadin-button  @click="${this._snapshot}" id="click-photo">Upload!</vaadin-button>
+                <vaadin-button @click="${this._snapshot}" id="click-photo">Upload!</vaadin-button>
             </div>
         `
     }
 
     _snapshot() {
-        console.log("uploading")
+        this._notification = html`
+            <qui-alert level="info" showIcon>
+                <p>Uploading picture...</p>
+            </qui-alert>`
         const image = this.shadowRoot.querySelector("#snapshot").files[0];
         image.arrayBuffer().then(r => {
             const bytes = this._arrayBufferToBase64(r);
@@ -114,7 +117,6 @@ export class DemoInstaquarm extends LitElement {
                 'image': bytes,
                 'title': title
             };
-            console.log("Request", req);
             fetch('/pictures/new', {
                 method: 'POST',
                 headers: {
@@ -123,19 +125,21 @@ export class DemoInstaquarm extends LitElement {
                 body: JSON.stringify(req)
             })
                 .then(response => {
-                    console.log(JSON.stringify(response),"Response status",response.status);
-                    if(response.status===201) {
-                        this._notification = html`        
+                    console.log(JSON.stringify(response), "Response status", response.status);
+                    this.shadowRoot.querySelector("#title").value = null;
+                    this.shadowRoot.querySelector("#snapshot").value = null;
+                    if (response.status === 201) {
+                        this._notification = html`
                             <qui-alert level="success" dismissible showIcon>
                                 <p>Picture uploaded!</p>
                             </qui-alert>`
-                    } if (response.status===500){
-                            this._notification = html`        
-                                <qui-alert level="warning" dismissible showIcon>
-                                    <p>Circuit Breaker is open!</p>
-                                </qui-alert>`
-                    } if(response.status===503) {
-                            this._notification = html`        
+                    } else if (response.status === 500) {
+                        this._notification = html`
+                            <qui-alert level="warning" dismissible showIcon>
+                                <p>Circuit Breaker is open!</p>
+                            </qui-alert>`
+                    } else if (response.status === 503) {
+                        this._notification = html`
                             <qui-alert level="error" dismissible showIcon>
                                 <p>Picture uploading failed!</p>
                             </qui-alert>`
@@ -144,14 +148,14 @@ export class DemoInstaquarm extends LitElement {
         })
     }
 
-    _arrayBufferToBase64( buffer ) {
+    _arrayBufferToBase64(buffer) {
         let binary = '';
-        const bytes = new Uint8Array( buffer );
+        const bytes = new Uint8Array(buffer);
         const len = bytes.byteLength;
         for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode( bytes[ i ] );
+            binary += String.fromCharCode(bytes[i]);
         }
-        return window.btoa( binary );
+        return window.btoa(binary);
     }
 
 
@@ -160,11 +164,8 @@ export class DemoInstaquarm extends LitElement {
         console.log("login", userName);
         this.webAuthn.login({name: userName})
             .then(body => {
-                this._notification = html`
-                    <qui-alert level="success" dismissible showIcon>
-                        <p>Login successful for ${userName}</p>
-                    </qui-alert>`
                 this._username = userName;
+                this._notification = html``;
                 this._connected = true;
             })
             .catch(err => {
