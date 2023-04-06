@@ -67,3 +67,5 @@ nb-configuration.xml
 ansible/environment
 ansible/application
 ansible/hosts
+
+kubernetes/secret-aws.yaml

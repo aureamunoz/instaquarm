@@ -1,5 +1,7 @@
 package org.instaquarm.uploading.client;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
@@ -24,25 +26,28 @@ public class SquarerClient {
     @RestClient
     SquarerRestClient squarerRestClient;
 
+    // Fault tolerance
     @Retry
-    @Timeout(value = 10, unit = ChronoUnit.SECONDS)
+    @Timeout(value = 30, unit = ChronoUnit.SECONDS)
     @CircuitBreaker
-    public Picture makeItSquare(Picture picture) throws InterruptedException {
+    // Metrics
+    @Timed
+    @Counted
+    public void makeItSquare(Picture picture) throws InterruptedException {
         boolean chaos = chaosMode.orElse(Boolean.FALSE);
         if(chaos) {
             LOGGER.infof("We are in chaos mode");
             //for Fault tolerance demo purpose
-            maybeFail("UploadController#makeItSquare() failed");
+            maybeFail();
             LOGGER.infof("UploadController#makeItSquare() returning successfully");
             Thread.sleep(new Random().nextInt(3000));
         }
-
-        return squarerRestClient.makeItSquare(picture);
+        squarerRestClient.makeItSquare(picture);
     }
 
-    private void maybeFail(String failureLogMessage) {
+    private void maybeFail() {
         if (new Random().nextBoolean()) {
-            LOGGER.error(failureLogMessage);
+            LOGGER.error("UploadController#makeItSquare() failed");
             throw new RuntimeException("Resource failure.");
         }
     }

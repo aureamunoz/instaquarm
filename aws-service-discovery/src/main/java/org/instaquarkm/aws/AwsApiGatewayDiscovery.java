@@ -5,10 +5,9 @@ import io.smallrye.mutiny.tuples.Tuple2;
 import io.smallrye.stork.api.NoServiceInstanceFoundException;
 import io.smallrye.stork.api.ServiceDiscovery;
 import io.smallrye.stork.api.ServiceInstance;
-import io.smallrye.stork.api.config.ServiceConfig;
 import io.smallrye.stork.impl.DefaultServiceInstance;
-import io.smallrye.stork.spi.StorkInfrastructure;
 import io.smallrye.stork.utils.ServiceInstanceIds;
+import org.jboss.logging.Logger;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.apigateway.ApiGatewayAsyncClient;
 import software.amazon.awssdk.services.apigateway.ApiGatewayAsyncClientBuilder;
@@ -16,17 +15,17 @@ import software.amazon.awssdk.services.apigateway.model.GetStagesRequest;
 import software.amazon.awssdk.services.apigateway.model.RestApi;
 import software.amazon.awssdk.services.apigateway.model.Stage;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AwsApiGatewayDiscovery implements ServiceDiscovery {
 
+    private static final Logger LOGGER = Logger.getLogger(AwsApiGatewayDiscovery.class);
+
     private final ApiGatewayAsyncClient client;
     private final String serviceName;
 
     private final static String HOST_TEMPLATE = "%s.execute-api.%s.amazonaws.com";
-
 
     private final static String NO_API_ERROR = "No REST APIS named %s found in region %s";
     private final static String NO_STAGE_ERROR = "No stage defined for API %s (%S) in region %s";
@@ -39,9 +38,18 @@ public class AwsApiGatewayDiscovery implements ServiceDiscovery {
     private final String stage;
     private final Uni<List<ServiceInstance>> retrieval;
 
-    public AwsApiGatewayDiscovery(AwsApiGatewayConfiguration awsConfiguration, String name, ServiceConfig serviceConfig, StorkInfrastructure storkInfrastructure) {
-        ApiGatewayAsyncClientBuilder builder = ApiGatewayAsyncClient.builder()
-                .region(Region.of(awsConfiguration.getRegion()));
+    public AwsApiGatewayDiscovery(AwsApiGatewayConfiguration awsConfiguration, String name, StorkAwsCredentialsProvider credentialsProvider) {
+        ApiGatewayAsyncClientBuilder builder;
+        if (credentialsProvider == null || credentialsProvider.resolveCredentials().accessKeyId() == null) {
+            LOGGER.info("using default AWS credentials");
+            builder = ApiGatewayAsyncClient.builder()
+                    .region(Region.of(awsConfiguration.getRegion()));
+        } else {
+            LOGGER.info("using configured AWS credential");
+            builder = ApiGatewayAsyncClient.builder()
+                    .credentialsProvider(credentialsProvider)
+                    .region(Region.of(awsConfiguration.getRegion()));
+        }
         client = builder.build();
         serviceName = awsConfiguration.getApi() == null ? name : awsConfiguration.getApi();
         region = awsConfiguration.getRegion();
@@ -75,9 +83,10 @@ public class AwsApiGatewayDiscovery implements ServiceDiscovery {
             }
         }).<List<ServiceInstance>>map(tuple ->
                 List.of(new DefaultServiceInstance(ServiceInstanceIds.next(),
-                        HOST_TEMPLATE.formatted(tuple.getItem1().id(), region), 433,
-                        "/" + tuple.getItem2() + "/", true))
-        ).memoize().indefinitely();
+                        HOST_TEMPLATE.formatted(tuple.getItem1().id(), region), 443,
+                        "/" + tuple.getItem2(), true))
+        ).memoize().indefinitely()
+                .log();
     }
 
     @Override

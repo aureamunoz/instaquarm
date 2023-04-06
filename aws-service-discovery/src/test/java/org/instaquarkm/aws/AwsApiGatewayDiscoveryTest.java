@@ -17,7 +17,7 @@ class AwsApiGatewayDiscoveryTest {
         var c = new AwsApiGatewayConfiguration();
         c = c.withRegion("us-east-1");
 
-        AwsApiGatewayDiscovery discovery = new AwsApiGatewayDiscovery(c, "squarer", null, null);
+        AwsApiGatewayDiscovery discovery = new AwsApiGatewayDiscovery(c, "squarer", null);
         ServiceInstance squarer = discovery.getServiceInstances().await().indefinitely().get(0);
         Assertions.assertEquals("vaekn02h31.execute-api.us-east-1.amazonaws.com", squarer.getHost());
         Assertions.assertEquals("/stage/", squarer.getPath().orElse(null));

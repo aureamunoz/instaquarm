@@ -7,6 +7,7 @@ import io.smallrye.stork.api.config.ServiceDiscoveryType;
 import io.smallrye.stork.spi.ServiceDiscoveryProvider;
 import io.smallrye.stork.spi.StorkInfrastructure;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ServiceDiscoveryType("aws-api-gateway")
 @ServiceDiscoveryAttribute(name = "api",
@@ -17,8 +18,11 @@ import jakarta.enterprise.context.ApplicationScoped;
         description = "The cloud region", defaultValue = "us-east-1")
 @ApplicationScoped
 public class AwsServiceDiscoveryProvider implements ServiceDiscoveryProvider<AwsApiGatewayConfiguration> {
+
+    @Inject StorkAwsCredentialsProvider credentialsProvider;
+
     public ServiceDiscovery createServiceDiscovery(AwsApiGatewayConfiguration awsConfiguration, String name, ServiceConfig serviceConfig, StorkInfrastructure storkInfrastructure) {
-        return new AwsApiGatewayDiscovery(awsConfiguration, name, serviceConfig, storkInfrastructure);
+        return new AwsApiGatewayDiscovery(awsConfiguration, name, credentialsProvider);
 
     }
 }
