@@ -35,10 +35,6 @@ public class PictureController {
         return Picture.findAll().list();
     }
 
-    @GetMapping("/hello")
-    ResponseEntity<String> hello() {
-        return new ResponseEntity<>("Hello World!", HttpStatus.OK);
-    }
     @PostMapping("/new")
     @Transactional
     public ResponseEntity<Picture> add(PictureRequest request) throws InterruptedException {
