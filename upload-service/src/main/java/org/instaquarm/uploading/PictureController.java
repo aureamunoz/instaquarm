@@ -23,8 +23,6 @@ import org.jboss.logging.Logger;
 @RequestMapping("/pictures")
 public class PictureController {
 
-    private static final Logger LOGGER = Logger.getLogger(PictureController.class);
-
     @Inject
     SquarerClient squarerClient;
 
@@ -47,7 +45,7 @@ public class PictureController {
             return new ResponseEntity<>(picture, HttpStatus.CREATED);
         }catch(CircuitBreakerOpenException ex){
             return new ResponseEntity<>(picture, HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (RuntimeException e){ //when retry>4
+        } catch (RuntimeException e){ //when retry>3
             return new ResponseEntity<>(picture, HttpStatus.SERVICE_UNAVAILABLE);
         }
 

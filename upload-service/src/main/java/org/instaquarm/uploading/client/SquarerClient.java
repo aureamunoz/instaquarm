@@ -33,7 +33,7 @@ public class SquarerClient {
     // Metrics
     @Timed
     @Counted
-    public void makeItSquare(Picture picture) throws InterruptedException {
+    public Picture makeItSquare(Picture picture) throws InterruptedException {
         boolean chaos = chaosMode.orElse(Boolean.FALSE);
         if(chaos) {
             LOGGER.infof("We are in chaos mode");
@@ -42,7 +42,7 @@ public class SquarerClient {
             LOGGER.infof("UploadController#makeItSquare() returning successfully");
             Thread.sleep(new Random().nextInt(3000));
         }
-        squarerRestClient.makeItSquare(picture);
+        return squarerRestClient.makeItSquare(picture);
     }
 
     private void maybeFail() {
