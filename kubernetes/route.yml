@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: quarkus
     app.kubernetes.io/name: upload-service
-    app.kubernetes.io/version: 0.0.1-SNAPSHOT
+    app.kubernetes.io/version: 1.0.0
     app.openshift.io/runtime: quarkus
   annotations:
     openshift.io/host.generated: 'true'
