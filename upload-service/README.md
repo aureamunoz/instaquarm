@@ -172,7 +172,7 @@ In order to put in place a better front end and UI, add the following dependency
 <dependency>
       <groupId>org.instaquarkm</groupId>
       <artifactId>frontend</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.0</version>
 </dependency>
 ```
 
@@ -184,7 +184,7 @@ We will add a security layer with a new dependency ready to use that provides au
 <dependency>
     <groupId>org.instaquarkm</groupId>
     <artifactId>webauthn-authentication</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -574,7 +574,7 @@ Finally, check the metrics endpoint exposed out of the box. Navigate to [http://
     <dependency>
       <groupId>org.instaquarkm</groupId>
       <artifactId>aws-service-discovery</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.0</version>
     </dependency>
 ```
 
@@ -600,7 +600,13 @@ For that, add the following properties to the application.properties file:
 %prod.quarkus.datasource.password=${database-password}
 ````
 
-And kubernetes related properties:
+We also need `kubernetes-config` extension in order to use ConfigMaps and Secrets as configuration source. 
+Add the extension to the `pom` file:
+```bash
+quarkus extension add 'kubernetes-config'
+````
+
+And the following related properties:
 
 ````properties
 %prod.quarkus.kubernetes-config.secrets.enabled=true
@@ -621,4 +627,4 @@ If you add the Openshift extension:
 quarkus extension add 'openshift'
 ```
 
-The deploy can be triggered from the Dev-UI console by clicking the `Deploy to OpenShift` link.
+The deployment can be triggered from the Dev-UI console by clicking the `Deploy to OpenShift` link.
