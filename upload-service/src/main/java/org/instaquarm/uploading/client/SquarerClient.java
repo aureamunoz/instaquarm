@@ -47,7 +47,7 @@ public class SquarerClient {
 
     private void maybeFail() {
         if (new Random().nextBoolean()) {
-            LOGGER.error("UploadController#makeItSquare() failed");
+            LOGGER.error("SquarerClient#makeItSquare() failed");
             throw new RuntimeException("Resource failure.");
         }
     }
