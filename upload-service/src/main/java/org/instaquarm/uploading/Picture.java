@@ -32,6 +32,7 @@ public class Picture  extends PanacheEntity {
         this.image = image;
     }
 
+    //Needed for Hibernate to generate proxies
     public Picture() {
     }
 }
