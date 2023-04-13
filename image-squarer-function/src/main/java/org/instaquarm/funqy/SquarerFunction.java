@@ -18,7 +18,8 @@ public class SquarerFunction {
     @Funq
     public SquarerResponse squareFunction(SquarerRequest request) throws IOException {
         Image image = makeItSmall(makeItSquare(request.image));
-        var response = new SquarerResponse(request.owner, getBytes(image), request.title);
+        var response = new SquarerResponse(request.owner,
+                getBytes(image), request.title);
 
         sendToKafka(response);
         return response;
@@ -28,15 +29,7 @@ public class SquarerFunction {
     Emitter<SquarerResponse> emitter;
 
     private void sendToKafka(SquarerResponse response) {
-        long start = System.currentTimeMillis();
-        this.emitter.send(response)
-                .thenAccept(x -> {
-                    System.out.println("Message acked in " + (System.currentTimeMillis() - start) + "ms");
-                })
-                .exceptionally(e -> {
-                    System.out.println("Unable to send the message to kafka: " + e);
-                    return null;
-                }).toCompletableFuture().join();
+        this.emitter.send(response).toCompletableFuture().join();
     }
 
 
@@ -60,7 +53,8 @@ public class SquarerFunction {
 
     private Image makeItSmall(BufferedImage image) {
         if (image.getWidth() > 1024) {
-            return image.getScaledInstance(1024, 1024, Image.SCALE_SMOOTH);
+            return image.getScaledInstance(1024, 1024,
+                    Image.SCALE_SMOOTH);
         } else {
             return image;
         }

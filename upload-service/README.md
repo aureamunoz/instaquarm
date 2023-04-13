@@ -5,20 +5,22 @@ Table of Contents
   * [Before move forward](#Before-move-forward)
     * [Running a postgresql database locally using docker](#Running-a-postgresql-database-locally-using-docker)
     * [Populate the database](#Populate-the-database)
+  
   * [Demo Steps](#Demo-steps)
     * [Bootstrapping the project](#Bootstrapping-the-project)
-    * [Create a Pictures microservice accessing a Postgresql database](#Create-a-Pictures-microservice-accessing-a-Postgresql-database)
+    * [Create a Pictures microservice accessing a Postgresql database](#Create-a-Pictures-microservice-accessing-a-Postgresql-database) 
     * [Improve the User Interface](#Improve-the-User-Interface)
     * [Add security layer with WebAuthn](#Add-security-layer-with-WebAuthn)
+    * [Prod configuration](#Prod-configuration)
+    * [First Deployment to Kube](#Deploy-to-OpenShift)
     * [Using the Rest Client](#Using-the-Rest-Client)
-    * [Service Discovery with Stork](#Service-Discovery-with-Stork)
     * [Fault Tolerance](#Fault-Tolerance)
       * [Adding Resiliency Retries](#Adding-Resiliency-Retries)
       * [Adding Resiliency Timeouts](#Adding-Resiliency-Timeouts)
       * [Adding Resiliency Circuit Breaker](#Adding-Resiliency-Circuit-Breaker)
+    * [Service Discovery with Stork](#Service-Discovery-with-Stork)
     * [Health checks](#Health-checks)
-    * [Prod configuration](#Prod-configuration)
-    * [Deploy to OpenShift](#Deploy-to-OpenShift)
+    * [Second Deployment to Kube](#Deploy-to-OpenShift)
 
 # Upload-service 
 
