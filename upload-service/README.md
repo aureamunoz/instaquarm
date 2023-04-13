@@ -1,10 +1,30 @@
+Table of Contents
+=================
+
+* [Upload service](#Upload-service)
+  * [Before move forward](#Before-move-forward)
+    * [Running a postgresql database locally using docker](#Running-a-postgresql-database-locally-using-docker)
+    * [Populate the database](#Populate-the-database)
+  * [Demo Steps](#Demo-steps)
+    * [Bootstrapping the project](#Bootstrapping-the-project)
+    * [Create a Pictures microservice accessing a Postgresql database](#Create-a-Pictures-microservice-accessing-a-Postgresql-database)
+    * [Improve the User Interface](#Improve-the-User-Interface)
+    * [Add security layer with WebAuthn](#Add-security-layer-with-WebAuthn)
+    * [Using the Rest Client](#Using-the-Rest-Client)
+    * [Service Discovery with Stork](#Service-Discovery-with-Stork)
+    * [Fault Tolerance](#Fault-Tolerance)
+      * [Adding Resiliency Retries](#Adding-Resiliency-Retries)
+      * [Adding Resiliency Timeouts](#Adding-Resiliency-Timeouts)
+      * [Adding Resiliency Circuit Breaker](#Adding-Resiliency-Circuit-Breaker)
+    * [Health checks](#Health-checks)
+    * [Prod configuration](#Prod-configuration)
+    * [Deploy to OpenShift](#Deploy-to-OpenShift)
+
 # Upload-service 
 
 This project is used to present Quarkus in several conferences.
 
-Hibernate ORM with Panache quickstart - Quarkus</h1>
-This application demonstrates how a Quarkus application implements a CRUD endpoint to manage pictures using Hibernate ORM with Panache and Quarkus Spring Web extension 
-This management interface invokes the CRUD service endpoint, which interacts with a database using JPA and several other well known libraries.
+TO DO add here the architecture (from Miro)
 
 Behind the scenes, we have:
 - Hibernate ORM with Panache taking care of all CRUD operations
@@ -13,37 +33,43 @@ Behind the scenes, we have:
 - the Narayana Transaction Manager coordinating all transactions
 - Agroal, the high performance Datasource implementation
 - The Undertow webserver
+- Rest Client to call a remote API
+- Stork for service discovery and instance selection
+- Smallrye Fault Tolerance to make a more resilient application
+- Smallrye Healthcheck providing information about the status of the application
+- Metrics provided by the Micrometer extension
+- Kubernetes config extension allowing Quarkus to read configuration from ConfigMaps and Secrets
+- OpenShift extension will generate OpenShift manifests and apply them to the cluster
 
-To add a new picture you can curl the endpoint:
 
-```bash
-curl --header "Content-Type: application/json" \                                                                                                                               ✔  16:23:59 
---request POST \
---data '{"title":"my-selfie" }' \
-http://localhost:8080/pictures
-```
+## Before move forward
 
-Run a postgresql data base using docker:
+### Running a postgresql database locally using docker
 
 ````bash
 docker run --ulimit memlock=-1:-1 -it --rm=true --memory-swappiness=0 --name quarkus_test -e POSTGRES_USER=quarkus_test -e POSTGRES_PASSWORD=quarkus_test -e POSTGRES_DB=quarkus_test -p 5432:5432 postgres:14.5
 ````
 
-You can copy a few images in the container and adjust the `import.sql` file accordingly:
+### Populate the database
 
-```
+As this microservice allows to stock some pictures in a database, you may want to populate the database with a few elements. 
+If so, you can proceed with following steps:
+
+You can copy a few images in the container:
+
+```bash
 docker cp /Users/auri/pictures/myselfie.jpg ef7a6fdcbb9f:var/lib/postgresql/data/
 ```
 
 **Note**: ef7a6fdcbb9f is the container ID to which the myselfie.jpg will be copied. 
 
-Then, initialize the database with it adding the following line in ìmport.sql:
+Then, adjust the `import.sql` file accordingly to read these images:
 
 ```sql
 INSERT INTO picture(title, image) VALUES ('My selfie', pg_read_binary_file('/var/lib/postgresql/data/myselfie.jpg'));
 ```
 
-Demo Time
+## Demo steps
 
 ### Bootstrapping the project
 
@@ -53,7 +79,7 @@ Demo Time
 - Go to the root directory
 - Open IDEA
 
-### Crate a Pictures microservice accessing a Postgresql database
+### Create a Pictures microservice accessing a Postgresql database
 
 - Update Quarkus version to 3.0.0.CR2
 - Launch dev mode: `quarkus dev`
@@ -161,10 +187,10 @@ public class PictureController {
 
 Check the new endpoint by curl:
 ````bash
-curl --header "Content-Type: application/json" --request POST --data '{"title":"my-selfie" }' http://localhost:8080/pictures/new
+curl --header "Content-Type: application/json" --request POST --data '{"title":"my-selfie","owner":"auri"}' http://localhost:8080/pictures/new
 ````
 
-### Add a better UI
+### Improve the User Interface
 
 In order to put in place a better front end and UI, add the following dependency to the `pom.xml` file:
 
@@ -303,13 +329,29 @@ public class PictureController {
 
 ````
 
+### Service Discovery with Stork
+
+```xml
+    <dependency>
+      <groupId>org.instaquarkm</groupId>
+      <artifactId>aws-service-discovery</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+```
+
+````properties
+#quarkus.rest-client.squarer-function.url=https://vaekn02h31.execute-api.us-east-1.amazonaws.com/stage
+quarkus.rest-client.squarer-function.url=stork://squarer
+quarkus.stork.squarer.service-discovery.type=aws-api-gateway
+````
+
+Finally, add the credentials needed by the Squarer function.
+
 ### Fault Tolerance
 Our endpoint requires communication to an external service, the Squarer function, which introduces a factor of unreliability.
 We will use SmallRye Fault Tolerance extension to simplify making more resilient uploading-service.
 
-
-#### Add the extension dependency
-
+Add the extension dependency. 
 This time we will use the following command instead of editing the pom.xml file:
 
 ```bash
@@ -350,7 +392,7 @@ public class SquarerClient {
 
 We can test this and see how some requests fail.
 
-#### Adding Resiliency: Retries
+#### Adding Resiliency Retries
 
 Add the @Retry annotation to the `SquarerClient#makeItSquare()` method as follows:
 
@@ -388,7 +430,7 @@ Now, practically all requests should be succeeding. The `SquarerClient#makeItSqu
 The max retries by default are 3, but you can configure more if you wand using the 'maxRetries' configuration in the annotation.
 To see that the failures still happen, check the output of the development server.
 
-#### Adding Resiliency: Timeouts
+#### Adding Resiliency Timeouts
 
 So what else have we got in MicroProfile Fault Tolerance? Let’s look into timeouts.
 As we have seen, the Squarer function takes a few seconds to execute. This is not a critical functionality but a nice-to-have, so we could want rather time out and return the response if the time is greater than some thumbnail. This can be done bya the `Timeout` annotation.
@@ -427,7 +469,7 @@ public class SquarerClient {
 ````
 Note that the `maybeFail()` call has been commented out in order to demonstrate that a timeout is triggered.
 
-#### Adding Resiliency: Circuit Breaker
+#### Adding Resiliency Circuit Breaker
 
 A circuit breaker is useful for limiting number of failures happening in the system, when part of the system becomes temporarily unstable. 
 The circuit breaker records successful and failed invocations of a method, and when the ratio of failed invocations reaches the specified threshold, the circuit breaker opens and blocks all further invocations of that method for a given time.
@@ -475,7 +517,7 @@ Look at Circuit Breaker Maintenance
 
 There is also the possibility to configure Fallbacks to indicate an alternative method to execute in case of error.
 
-### Health check
+### Health checks
 
 SmallRye Health allows applications to provide information about their state which is typically useful in cloud environments where automated processes must be able to determine whether the application should be discarded or restarted.
 In Quarkus, we use the Smallrye Health extension to configure probes.
@@ -567,24 +609,6 @@ It's possible to configure some extra tags on the annotation.
 Note that many methods, e.g. REST endpoint methods, are counted and timed by the micrometer extension out of the box.
 
 Finally, check the metrics endpoint exposed out of the box. Navigate to [http://localhost:8080/q/metrics](http://localhost:8080/q/metrics)
-
-### Service Discovery with Stork
-
-```xml
-    <dependency>
-      <groupId>org.instaquarkm</groupId>
-      <artifactId>aws-service-discovery</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-```
-
-````properties
-#quarkus.rest-client.squarer-function.url=https://vaekn02h31.execute-api.us-east-1.amazonaws.com/stage
-quarkus.rest-client.squarer-function.url=stork://squarer
-quarkus.stork.squarer.service-discovery.type=aws-api-gateway
-````
-
-Finally, add the credentials needed by the Squarer function.
 
 ### Prod configuration
 
