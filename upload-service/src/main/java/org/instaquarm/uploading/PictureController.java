@@ -38,16 +38,7 @@ public class PictureController {
     public ResponseEntity<Picture> add(PictureRequest request) throws InterruptedException {
         Picture picture = new Picture(request.title,request.user,request.image);
         Picture.persist(picture);
-        try {
-            squarerClient.makeItSquare(picture);
-            return new ResponseEntity<>(picture, HttpStatus.CREATED);
-        } catch (TimeoutException e) {
-            return new ResponseEntity<>(picture, HttpStatus.CREATED);
-        }catch(CircuitBreakerOpenException ex){
-            return new ResponseEntity<>(picture, HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (RuntimeException e){ //when retry>3
-            return new ResponseEntity<>(picture, HttpStatus.SERVICE_UNAVAILABLE);
-        }
+        return new ResponseEntity<>(picture, HttpStatus.CREATED);
 
     }
 
