@@ -12,7 +12,6 @@ Table of Contents
     * [Improve the User Interface](#Improve-the-User-Interface)
     * [Add security layer with WebAuthn](#Add-security-layer-with-WebAuthn)
     * [Prod configuration](#Prod-configuration)
-    * [First Deployment to Kube](#Deploy-to-OpenShift)
     * [Using the Rest Client](#Using-the-Rest-Client)
     * [Fault Tolerance](#Fault-Tolerance)
       * [Adding Resiliency Retries](#Adding-Resiliency-Retries)
@@ -20,7 +19,7 @@ Table of Contents
       * [Adding Resiliency Circuit Breaker](#Adding-Resiliency-Circuit-Breaker)
     * [Service Discovery with Stork](#Service-Discovery-with-Stork)
     * [Health checks](#Health-checks)
-    * [Second Deployment to Kube](#Deploy-to-OpenShift)
+    * [Deployment to Kube](#Deploy-to-OpenShift)
 
 # Upload-service 
 
